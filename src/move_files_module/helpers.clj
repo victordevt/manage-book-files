@@ -23,6 +23,12 @@
   (some #(= filename (.getName %))
         (filter #(.isFile %) (file-seq (io/file directory)))))
 
+(defn folder-contains-subfolder? [folder subfolder]
+  (some #(and (.isDirectory %)
+              (not (.isHidden %))
+              (= subfolder (.getName %)))
+        (file-seq (io/file folder))))
+
 (defn file-contains-string? [substring directory]
   (some #(if (.isFile %)
            (let [file-name (.getName %)]
@@ -45,17 +51,26 @@
 
 
 ;; create a function to copy file from source to target, if exists with the same filename, add suffix
-(defn copy-file [source target-folder]
-  (let [source-file (io/file source)
-        target-file (io/file target-folder (.getName source-file))]
-    (if (file-exists? source-file)
-      (if (file-exists? target-file)
-        (let [file-extension (extract-extension target-file)
-              base-filename (.getName target-file)
-              new-filename (str base-filename "_copy." file-extension)]
-          (io/copy source-file (io/file target-folder new-filename)))
-        (io/copy source-file target-file))
-      (println "The source is not a file. Please provide a file as the source."))))
+(defn copy-file [source-file target-folder]
+  (let [source-path (io/as-file source-file)
+        target-path (io/as-file target-folder)
+        target-file (io/file target-path (.getName source-path))
+        target-file-exists? (.exists target-file)]
+    (if target-file-exists?
+      (let [source-file-size (.length source-path)
+            target-file-size (.length target-file)]
+        (if (not= source-file-size target-file-size)
+          (let [target-file-name (.getName target-file)
+                target-file-extension (.substring target-file-name (.lastIndexOf target-file-name "."))
+                target-file-name-with-copy (str (.getName target-file) " (Copy)" target-file-extension)]
+            (io/copy source-path (io/file target-path target-file-name-with-copy)))
+          (io/copy source-path target-file)))
+      (io/copy source-path target-file))))
+
+(defn rename-folder [folder-path]
+  (let [folder (io/as-file folder-path)
+        parent-folder (io/file (.getParent folder) (str "[done] " (.getName folder)))]
+    (.renameTo folder parent-folder)))
 
 (defn get-current-folder [full-path]
   (->>
@@ -68,7 +83,8 @@
 (defn get-epub-files [directory]
   (->> (file-seq (io/file directory))
        (filter #(and (.isFile %) (.endsWith (str %) ".epub")))
-       (map #(.getName %))))
+       (map #(.getCanonicalPath %))
+       ))
 
 (defn create-directory-and-copy-files [source-directory destination-directory]
   (let [files (->> (io/file source-directory)
