@@ -1,24 +1,15 @@
 (ns move_files_module.helpers
   (:require [clojure.java.io :as io]
-            [clojure.set]))
-
-(defn extract-author-name [filename]
-  (-> filename
-      (re-matches (re-pattern #"(.*)( - .*)\.epub$"))
-      (second)))
-
-(defn get-first-three-characters [input-str]
-  (if-let [matches (re-matches #"^(.{3})" input-str)]
-    (second matches)
-    nil))
-
-(defn extract-author-name_old [book-name]
-  (if-let [matches (re-matches (re-pattern #"(.*)( - .*)\.epub$") book-name)]
-    (second matches)
-    nil))
+            [clojure.set]
+            [clojure.string :as str]))
 
 (defn extract-author-name [book-name]
   (if-let [matches (re-matches (re-pattern #"(.*?) - .*\.epub$") book-name)]
+    (second matches)
+    nil))
+
+(defn extract-extension [file]
+  (if-let [matches (re-matches #".*\.(\w+)$" file)]
     (second matches)
     nil))
 
@@ -32,7 +23,7 @@
   (some #(= filename (.getName %))
         (filter #(.isFile %) (file-seq (io/file directory)))))
 
-(defn file-contains-string [substring directory]
+(defn file-contains-string? [substring directory]
   (some #(if (.isFile %)
            (let [file-name (.getName %)]
              (if (clojure.string/includes? file-name substring)
@@ -44,8 +35,40 @@
     (.mkdir dir)
     dir))
 
-(defn same-file-names [file1 file2]
-  )
+;; part 2
+(defn same-title? [title1 title2]
+  (= (clojure.string/lower-case title1)
+     (clojure.string/lower-case title2)))
+
+; get list of files with the name ending in .epub from a directory, including subdirectories
+; /Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/A/Albert Camus
+
+
+;; create a function to copy file from source to target, if exists with the same filename, add suffix
+(defn copy-file [source target-folder]
+  (let [source-file (io/file source)
+        target-file (io/file target-folder (.getName source-file))]
+    (if (file-exists? source-file)
+      (if (file-exists? target-file)
+        (let [file-extension (extract-extension target-file)
+              base-filename (.getName target-file)
+              new-filename (str base-filename "_copy." file-extension)]
+          (io/copy source-file (io/file target-folder new-filename)))
+        (io/copy source-file target-file))
+      (println "The source is not a file. Please provide a file as the source."))))
+
+(defn get-current-folder [full-path]
+  (->>
+    (str/split full-path #"/")
+    last))
+
+; final function
+
+
+(defn get-epub-files [directory]
+  (->> (file-seq (io/file directory))
+       (filter #(and (.isFile %) (.endsWith (str %) ".epub")))
+       (map #(.getName %))))
 
 (defn create-directory-and-copy-files [source-directory destination-directory]
   (let [files (->> (io/file source-directory)
@@ -75,6 +98,8 @@
     {:count (count files)
      :files file-names}
     (count files)))
+
+(.isDirectory (io/file "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/V/Victor Kernbach/Victor Kernbach - Luntrea Sublima/Victor Kernbach - Luntrea Sublima.epub"))
 
 (defn epub-files-delta [source-dir target-dir]
   (let [source-files (->> (file-seq (io/file source-dir))
