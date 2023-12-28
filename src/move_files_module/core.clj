@@ -34,7 +34,7 @@
             (helpers/copy-file file target-folder-with-author)
             ))))))
 
-(loop-first-level-subfolders "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/B" "/Users/victorteianu/Documents/books/_packs/ebooks pack" process-subfolder)
+(loop-first-level-subfolders "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/A" "/Users/victorteianu/Documents/books/_packs/ebooks pack" process-subfolder)
 
 ;(helpers/create-directory-and-copy-files "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/B/B. Blanchard" "/Users/victorteianu/Documents/books/_packs/ebooks pack")
 
