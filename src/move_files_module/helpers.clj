@@ -111,7 +111,7 @@
 
 (defn count-files [path]
   (let [file-seq (file-seq (io/file path))
-        files (filter #(and (.isFile %) (.endsWith (str %) ".epub")) file-seq)
+        files (filter #(and (.isFile %) (.endsWith (str %) ".epub") (not (clojure.string/includes? (str %) "(Copy)"))) file-seq)
         file-names (map #(.getName %) files)]
     {:count (count files)
      :files file-names}
@@ -126,11 +126,14 @@
                           (filter #(and (.isFile %) (.endsWith (str %) ".epub")))
                           (map #(.getName %))
                           set)
-        differing-files (clojure.set/difference source-files target-files)]
-    (println "source nr files:" (count source-files))
-    (println "target nr files:" (count target-files))
+        lowercase-source (set (map clojure.string/lower-case source-files))
+        lowercase-target (set (map clojure.string/lower-case target-files))
 
-    (doseq [file-name differing-files]
+        differing-files (clojure.set/difference lowercase-source lowercase-target)]
+    (println "source nr files:" (count lowercase-source))
+    (println "target nr files:" (count lowercase-target))
+
+    (doseq [file-name (sort differing-files)]
       (println file-name))
 
     (println "Number of differing files:" (count differing-files))))

@@ -33,34 +33,3 @@
           (doseq [file files-from-author-folder]
             (helpers/copy-file file target-folder-with-author)
             ))))))
-
-(loop-first-level-subfolders "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/A" "/Users/victorteianu/Documents/books/_packs/ebooks pack" process-subfolder)
-
-;(helpers/create-directory-and-copy-files "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/B/B. Blanchard" "/Users/victorteianu/Documents/books/_packs/ebooks pack")
-
-;(helpers/folder-contains-subfolder? "/Users/victorteianu/Documents/books/_packs/ebooks pack" "Albert Camus")
-
-;(helpers/folder-contains-subfolder? "/Users/victorteianu/Documents/books/_packs/ebooks pack" "Albert Camus")
-
-;(helpers/rename-folder "/Users/victorteianu/Documents/books/_packs/ebooks pack/[done]_test")
-;(helpers/get-epub-files "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/A")
-
-;(helpers/copy-file "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/V/Victor Kernbach/Victor Kernbach - Luntrea Sublima/Victor Kernbach - Luntrea Sublima.epub" "/Users/victorteianu/Documents/books/_packs/ebooks pack/_test")
-
-;(let [directory "/Users/victorteianu/Documents/books/_packs/Lada.cu.cărţi.5217.cărţi.epub.în.limba.română"]
-;  (println (helpers/count-files directory)))
-;
-;(let [directory "/Volumes/MacOSssd/Users/victorteianu/Documents/books/_packs/ebooks pack"]
-;  (println (helpers/count-files directory)))
-;
-;(helpers/file-exists-in-directory? "Dama de pica" "/Users/victorteianu/Documents/books/_packs/Lada.cu.cărţi.5217.cărţi.epub.în.limba.română")
-;
-;(helpers/file-contains-string? "Pica" "/Users/victorteianu/Documents/books/_packs/Lada.cu.cărţi.5217.cărţi.epub.în.limba.română")
-;
-;(helpers/epub-files-delta "/Users/victorteianu/Documents/books/_packs/Lada.cu.cărţi.5217.cărţi.epub.în.limba.română" "/Volumes/MacOSssd/Users/victorteianu/Documents/books/_packs/ebooks pack")
-;
-;(helpers/count-files "/Users/victorteianu/Documents/books/_packs/Lada.cu.cărţi.5217.cărţi.epub.în.limba.română")
-;
-;(helpers/copy-file "/Users/victorteianu/Documents/books/_packs/BEST Romanian ebooks PACK - ePub format-NoGrp/A/A.S. Puskin/A.S. Puskin - Dama de pica/A.S. Puskin - Dama de pica.epub" "/path/to/target/file.txt")
-;
-;
