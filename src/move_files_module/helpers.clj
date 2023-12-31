@@ -137,3 +137,31 @@
       (println file-name))
 
     (println "Number of differing files:" (count differing-files))))
+
+; organize subfolders by letter
+(defn organize-subfolders [path output-folder]
+  (let [root-dir (io/file path)
+        subfolders (.listFiles root-dir)]
+    (doseq [subfolder subfolders]
+      (when (.isDirectory subfolder)
+        (let [relative-path (subs (.getAbsolutePath subfolder) (inc (.length (.getAbsolutePath root-dir))))]
+          (let [first-letter (subs (last (clojure.string/split relative-path #"/")) 0 1)
+                destination-path (str output-folder "/" first-letter)
+                destination-folder (io/file destination-path relative-path ".")
+                destination-folder-for-files (io/file destination-path relative-path)
+                ]
+            ;(println "will create dir:" destination-folder)
+            ;(println "will copy:" subfolder "->" destination-folder)
+            (io/make-parents destination-folder)
+            (let [files (->> (io/file subfolder)
+                             io/file
+                             .listFiles
+                             (map #(.getName %)))]
+              (doseq [file files]
+                (println file destination-folder-for-files)
+                (let [source-file (io/file subfolder file)
+                      destination-file (io/file destination-folder-for-files file)]
+                  (println "will copy:" source-file "->" destination-file)
+                  (copy-file source-file destination-folder-for-files))))
+            )
+          )))))
